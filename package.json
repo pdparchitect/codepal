@@ -4,7 +4,7 @@
   "description": "",
   "main": "lib/index.js",
   "bin": {
-    "supercode": 'bin/supercode.js'
+    "supercode": "bin/supercode.js"
   },
   "scripts": {
     "test": "true"
