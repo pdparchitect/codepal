@@ -1,24 +1,24 @@
 {
-  "name": "supercode",
+  "name": "codepal",
   "version": "0.0.1",
   "description": "",
   "main": "lib/index.js",
   "bin": {
-    "supercode": "bin/supercode.js"
+    "codepal": "bin/codepal.js"
   },
   "scripts": {
     "test": "true"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pdparchitect/supercode.git"
+    "url": "git+https://github.com/pdparchitect/codepal.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/pdparchitect/supercode/issues"
+    "url": "https://github.com/pdparchitect/codepal/issues"
   },
-  "homepage": "https://github.com/pdparchitect/supercode#readme",
+  "homepage": "https://github.com/pdparchitect/codepal#readme",
   "dependencies": {
     "dotenv": "^16.0.3",
     "gpt3-tokenizer": "^1.1.4",
