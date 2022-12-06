@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "",
   "main": "lib/index.js",
+  "bin": {
+    "supercode": 'bin/supercode.js'
+  },
   "scripts": {
     "test": "true"
   },
