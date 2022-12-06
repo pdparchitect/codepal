@@ -12,7 +12,7 @@ const { getOpenAI, Conversation } = require('../lib/index.js')
 async function main() {
   let conversationPath
 
-  await fs.promises.mkdir('.superchat', { recursive: true })
+  await fs.promises.mkdir('.codepal', { recursive: true })
 
   const conversation = new Conversation({
     openai: getOpenAI(process.env.OPENAI_API_KEY)
@@ -21,7 +21,7 @@ async function main() {
   if (process.argv[2]) {
     let conversationContents
 
-    for (const file of [process.argv[2], path.join('.superchat', process.argv[2]), path.join('.superchat', process.argv[2] + '.md')]) {
+    for (const file of [process.argv[2], path.join('.codepal', process.argv[2]), path.join('.codepal', process.argv[2] + '.md')]) {
       try {
         conversationPath = file
         conversationContents = await fs.promises.readFile(file)
@@ -38,7 +38,7 @@ async function main() {
 
     await conversation.loadConversation(conversationContents.toString())
   } else {
-    conversationPath = path.join('.superchat', `${uuidv4()}.md`)
+    conversationPath = path.join('.codepal', `${uuidv4()}.md`)
   }
 
   while (true) {
