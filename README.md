@@ -30,7 +30,21 @@ Once you've set up the environment variable, you can use CodePal by navigating t
 codepal
 ```
 
-This will start the CodePal chat interface, where you can write your code using natural language. CodePal will save your chat history in a directory called `.codepal` in your current working folder.
+This will start the CodePal chat interface, where you can write your code using natural language. CodePal will save your chat history in a directory called `.codepal` in your current working folder. To continue a previous chat session, you can provide the path to the chat history file, like this:
+
+```sh
+codepal .codepal/b1a7e548-da06-48be-9844-50f9b9c9436b.md
+```
+
+Alternatively, you can just provide the filename (without the path), like this:
+
+```sh
+codepal b1a7e548-da06-48be-9844-50f9b9c9436b
+```
+
+In this case, CodePal will automatically look for the chat history file in the `.codepal` directory of your current working folder.
+
+The command line tool will also be made aware of git in the coming weeks/days, allowing for even more convenient code writing.
 
 ## License
 
