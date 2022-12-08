@@ -14,7 +14,7 @@ function getOpenAI(apiKey) {
 class Conversation {
     constructor(options = {}) {
         const {
-            backstory = '',
+            backstory = 'You are a briliant coding assistent.',
 
             model = 'text-davinci-003',
             topP = 1,
