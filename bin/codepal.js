@@ -84,7 +84,7 @@ async function main() {
       process.exit(1)
     }
 
-    backstory = `${backstory ? backstory + '\n\n' : ''}\`\`\`\n${fileContents}\`\`\``
+    backstory = `${backstory ? backstory + '\n\n' : ''}file: ${file}\n\`\`\`\n${fileContents}\`\`\``
   }
 
   if (!process.env.OPENAI_API_KEY) {
