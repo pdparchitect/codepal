@@ -4,65 +4,130 @@ require('dotenv').config()
 
 const fs = require('fs')
 const path = require('path')
+const yargs = require('yargs/yargs')
 const inquirer = require('inquirer')
 const { v4: uuidv4 } = require('uuid')
+const { hideBin } = require('yargs/helpers')
 
 const { getOpenAI, Conversation } = require('../lib/index.js')
 
 async function main() {
-  let conversationPath
+  const { interactive, session, template } = yargs(hideBin(process.argv))
+    .option('interactive', {
+      alias: 'i',
+      type: 'boolean',
+      description: 'Start in interactive mode'
+    })
+    .options('session', {
+      alias: 's',
+      type: 'string',
+      description: 'Session id/file to resume'
+    })
+    .options('tempalte', {
+      alias: 't',
+      type: 'string',
+      description: 'Template name/file to use'
+    })
+    .parse()
 
-  await fs.promises.mkdir('.codepal', { recursive: true })
+  let backstory
 
-  const conversation = new Conversation({
-    openai: getOpenAI(process.env.OPENAI_API_KEY)
-  })
-
-  if (process.argv[2]) {
-    let conversationContents
-
-    for (const file of [process.argv[2], path.join('.codepal', process.argv[2]), path.join('.codepal', process.argv[2] + '.md')]) {
+  if (template) {
+    for (const file of [template, path.join('.codepal', 'templates', template), path.join('.codepal', 'templates', template + '.md')]) {
       try {
-        conversationPath = file
-        conversationContents = await fs.promises.readFile(file)
+        backstory = (await fs.promises.readFile(file)).toString()
 
         break
       } catch (e) {}
     }
 
-    if (!conversationContents) {
-      console.error(`[x] session ${process.argv[2]} not found`)
+    if (!backstory) {
+      console.error(`[x] template ${template} not found`)
+
+      process.exit(1)
+    }
+  }
+
+  if (!process.env.OPENAI_API_KEY) {
+    throw new Error('Environment variable OPENAI_API_KEY not found')
+  }
+
+  const conversation = new Conversation({
+    openai: getOpenAI(process.env.OPENAI_API_KEY),
+
+    backstory: backstory
+  })
+
+  await Promise.all([
+    fs.promises.mkdir(path.join('.codepal', 'sessions'), { recursive: true }),
+    fs.promises.mkdir(path.join('.codepal', 'templates'), { recursive: true })
+  ])
+
+  let sessionPath
+
+  if (session) {
+    let sessionContents
+
+    for (const file of [session, path.join('.codepal', 'sessions', session), path.join('.codepal', 'sessions', session + '.md')]) {
+      try {
+        sessionPath = file
+        sessionContents = (await fs.promises.readFile(file)).toString()
+
+        break
+      } catch (e) {}
+    }
+
+    if (!sessionContents) {
+      console.error(`[x] session ${session} not found`)
 
       process.exit(1)
     }
 
-    await conversation.loadConversation(conversationContents.toString())
+    await conversation.loadConversation(sessionContents)
   } else {
-    conversationPath = path.join('.codepal', `${uuidv4()}.md`)
+    sessionPath = path.join('.codepal', 'sessions', `${uuidv4()}.md`)
   }
 
-  while (true) {
-    const question = await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'message',
-        message: 'Q',
+  if (interactive) {
+    while (true) {
+      const question = await inquirer.prompt([
+        {
+          type: 'input',
+          name: 'message',
+          message: 'Q',
+        }
+      ]);
+
+      if (question.message.toLowerCase() === 'exit') {
+        break;
       }
-    ]);
 
-    if (question.message.toLowerCase() === 'exit') {
-      break;
+      process.stdout.write('\n')
+
+      for await (const token of conversation.interact(question.message)) {
+          process.stdout.write(token)
+      }
+
+      process.stdout.write('\n')
+
+      await fs.promises.writeFile(sessionPath, conversation.dumpConversation())
+    }
+  } else {
+    const questionChunks = []
+
+    for await (const chunk of process.stdin) {
+      questionChunks.push(chunk)
+    }
+
+    const question = questionChunks.join('')
+
+    for await (const token of conversation.interact(question)) {
+      process.stdout.write(token)
     }
 
     process.stdout.write('\n')
 
-    for await (const token of conversation.interact(question.message)) {
-        process.stdout.write(token)
-    }
-
-    process.stdout.write('\n')
-
-    await fs.promises.writeFile(conversationPath, conversation.dumpConversation())
+    await fs.promises.writeFile(sessionPath, conversation.dumpConversation())
   }
 }
 
