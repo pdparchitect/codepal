@@ -5,6 +5,10 @@ const { PassThrough } = require('stream')
 const { Configuration, OpenAIApi } = require('openai')
 const { default: GPT3Tokenizer } = require('gpt3-tokenizer')
 
+const defaultBackstory = 'You are a briliant coding assistent.'
+
+const defaultInstructions = 'Code is output as markdown codeblocks.'
+
 function getOpenAI(apiKey) {
     return new OpenAIApi(new Configuration({
         apiKey
@@ -14,7 +18,9 @@ function getOpenAI(apiKey) {
 class Conversation {
     constructor(options = {}) {
         const {
-            backstory = 'You are a briliant coding assistent.',
+            backstory = defaultBackstory,
+
+            instructions = defaultInstructions,
 
             model = 'text-davinci-003',
             topP = 1,
@@ -28,6 +34,8 @@ class Conversation {
 
         this.backstory = backstory
 
+        this.instructions = instructions
+
         this.maxTokens = maxTokens
         this.promptMaxTokens = promptMaxTokens
 
@@ -39,8 +47,10 @@ class Conversation {
 
         this.conversation = []
 
-        if (backstory) {
-            this.conversation.push(this.backstory)
+        const intro = [this.backstory, this.instructions].filter(f => f).join('\n\n')
+
+        if (intro) {
+            this.conversation.push(intro)
         }
 
         this.tokenizer = new GPT3Tokenizer({ type: 'gpt3' })
