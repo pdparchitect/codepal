@@ -19,8 +19,22 @@ function getRootPath(...args) {
   return path.join(getRoot(), ...args)
 }
 
+async function fileExists(file) {
+  try {
+    await fs.promises.stat(file)
+
+    return true
+  } catch (err) {
+    if (err.code === 'ENOENT') {
+      return false
+    }
+
+    throw err
+  }
+}
+
 async function main() {
-  const { interactive, session, template, file, model, topp, temperature } = yargs(hideBin(process.argv))
+  let { interactive, session, template, file, model, topp, temperature } = yargs(hideBin(process.argv))
     .option('interactive', {
       alias: 'i',
       type: 'boolean',
@@ -55,7 +69,7 @@ async function main() {
       default: 1
     })
     .options('temperature', {
-      alias: 'm',
+      alias: 'e',
       type: 'number',
       description: 'The temperature for the OpenAI API',
       default: 0.7
@@ -63,6 +77,14 @@ async function main() {
     .parse()
 
   let backstory
+
+  if (!template) {
+    const defaultTemplatePath = getRootPath('templates', 'default.md')
+
+    if (await fileExists(defaultTemplatePath)) {
+      template = defaultTemplatePath
+    }
+  }
 
   if (template) {
     for (const file of [template, getRootPath('templates', template), getRootPath('templates', template + '.md')]) {
