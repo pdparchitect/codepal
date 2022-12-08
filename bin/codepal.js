@@ -12,7 +12,7 @@ const { hideBin } = require('yargs/helpers')
 const { getOpenAI, Conversation } = require('../lib/index.js')
 
 function getRoot() {
-  return '.codepal'
+  return '.codepal' // TODO: get the root from start of git project
 }
 
 function getRootPath(...args) {
