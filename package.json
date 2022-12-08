@@ -1,7 +1,8 @@
 {
   "name": "codepal",
   "version": "0.2.0",
-  "description": "",
+  "description": "CodePal is a command line tool with a chat interface that helps developers write code. It is built on top of GPT-3 and ChatGPT (which is a work in progress), and provides a convenient and intuitive way for developers to write code quickly and efficiently.",
+  "keywords": ["code", "codex", "gpt3", "chatgpt"],
   "main": "lib/index.js",
   "bin": {
     "codepal": "bin/codepal.js"
