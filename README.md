@@ -39,18 +39,27 @@ npx codepal
 This will start the CodePal chat interface, where you can write your code using natural language. CodePal will save your chat history in a directory called `.codepal` in your current working folder. To continue a previous chat session, you can provide the path to the chat history file, like this:
 
 ```sh
-npx codepal .codepal/b1a7e548-da06-48be-9844-50f9b9c9436b.md
+npx codepal -s .codepal/b1a7e548-da06-48be-9844-50f9b9c9436b.md
 ```
 
 Alternatively, you can just provide the filename (without the path), like this:
 
 ```sh
-npx codepal b1a7e548-da06-48be-9844-50f9b9c9436b
+npx codepal -s b1a7e548-da06-48be-9844-50f9b9c9436b
 ```
 
-In this case, CodePal will automatically look for the chat history file in the `.codepal` directory of your current working folder.
+In this case, CodePal will automatically search for the chat history file in the `.codepal` directory of your current working folder.
 
-The command line tool will also be made aware of git in the coming weeks/days, allowing for even more convenient code writing.
+The command line tool can also be executed directly with npx, which is a package runner for npm packages.
+
+Additionally, there are several flags available that can be used to customize your experience when using CodePal.
+
+| Flag | Description |
+| --- | --- |
+| -i | Starts CodePal in interactive mode |
+| -s | Resumes a previous chat session |
+| -t | Starts with a pre-defined template |
+| -f | Pre prompt with the contents of a file |
 
 ## Examples
 
