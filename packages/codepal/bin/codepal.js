@@ -108,10 +108,7 @@ async function main() {
     temperature: temperature
   })
 
-  await Promise.all([
-    fs.promises.mkdir(getRootPath('sessions'), { recursive: true }),
-    fs.promises.mkdir(getRootPath('templates'), { recursive: true })
-  ])
+  await fs.promises.mkdir(getRootPath('sessions'), { recursive: true })
 
   let sessionPath
 
