@@ -20,7 +20,7 @@ function getRootPath(...args) {
 }
 
 async function main() {
-  const { interactive, session, template, file } = yargs(hideBin(process.argv))
+  const { interactive, session, template, file, topp, temperature } = yargs(hideBin(process.argv))
     .option('interactive', {
       alias: 'i',
       type: 'boolean',
@@ -40,6 +40,18 @@ async function main() {
       alias: 'f',
       type: 'string',
       description: 'Start from a file'
+    })
+    .options('topp', {
+      alias: 'p',
+      type: 'number',
+      description: 'The topP for the OpenAI API',
+      default: 1
+    })
+    .options('temperature', {
+      alias: 'm',
+      type: 'number',
+      description: 'The temperature for the OpenAI API',
+      default: 0.7
     })
     .parse()
 
@@ -65,7 +77,7 @@ async function main() {
     let fileContents
     
     try {
-      (await fs.promises.readFile(file)).toString()
+      fileContents = (await fs.promises.readFile(file)).toString()
     } catch (e) {
       console.error(`x file ${file} not found`)
 
@@ -82,7 +94,10 @@ async function main() {
   const conversation = new Conversation({
     openai: getOpenAI(process.env.OPENAI_API_KEY),
 
-    backstory: backstory
+    backstory: backstory,
+
+    topP: topp,
+    temperature: temperature
   })
 
   await Promise.all([
