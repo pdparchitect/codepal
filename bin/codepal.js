@@ -20,7 +20,7 @@ function getRootPath(...args) {
 }
 
 async function main() {
-  const { interactive, session, template, file, topp, temperature } = yargs(hideBin(process.argv))
+  const { interactive, session, template, file, model, topp, temperature } = yargs(hideBin(process.argv))
     .option('interactive', {
       alias: 'i',
       type: 'boolean',
@@ -40,6 +40,13 @@ async function main() {
       alias: 'f',
       type: 'string',
       description: 'Start from a file'
+    })
+    .options('model', {
+      alias: 'm',
+      type: 'string',
+      description: 'Which model to use',
+      default: 'text-davinci-003',
+      options: ['text-davinci-003']
     })
     .options('topp', {
       alias: 'p',
@@ -96,6 +103,7 @@ async function main() {
 
     backstory: backstory,
 
+    model: model,
     topP: topp,
     temperature: temperature
   })
